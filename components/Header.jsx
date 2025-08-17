@@ -38,10 +38,10 @@ export default function Header({ session, streak, onReportsClick, onSettingsClic
                 </div>
                 <button
                   onClick={() => signOut()}
-                  className="btn-primary bg-red-500 text-white hover:bg-red-600 px-2 sm:px-4"
+                  className="btn-primary bg-red-500 text-white hover:bg-red-600 px-2 sm:px-4 flex items-center space-x-1 sm:space-x-2"
                 >
+                  <LogIn className="w-4 h-4 rotate-180" />
                   <span className="hidden sm:inline">Sign Out</span>
-                  <span className="sm:hidden">Out</span>
                 </button>
               </div>
             ) : (
@@ -51,7 +51,6 @@ export default function Header({ session, streak, onReportsClick, onSettingsClic
               >
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign In</span>
-                <span className="sm:hidden">In</span>
               </button>
             )}
           </div>

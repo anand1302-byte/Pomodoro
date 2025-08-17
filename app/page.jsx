@@ -25,7 +25,8 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       const userId = session.user.email
-      setStreak(trackingService.getStreak(userId))
+      const currentStreak = trackingService.updateStreak(userId)
+      setStreak(currentStreak)
       
       const savedTheme = localStorage.getItem('theme')
       if (savedTheme) setTheme(JSON.parse(savedTheme))
@@ -45,7 +46,6 @@ export default function Home() {
     if (session) {
       const userId = session.user.email
       trackingService.saveSession(userId, mode, duration)
-      setStreak(trackingService.getStreak(userId))
     }
   }
 
