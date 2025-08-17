@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6 transition-all duration-200 hover:shadow-xl;
+  }
+}
