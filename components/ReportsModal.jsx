@@ -1,21 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Clock, Calendar, Trophy, BarChart } from 'lucide-react'
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-
-const mockData = [
-  { day: 'Mon', hours: 2.5 },
-  { day: 'Tue', hours: 3.2 },
-  { day: 'Wed', hours: 1.8 },
-  { day: 'Thu', hours: 4.1 },
-  { day: 'Fri', hours: 2.9 },
-  { day: 'Sat', hours: 1.5 },
-  { day: 'Sun', hours: 3.7 }
-]
+import { trackingService } from '../lib/tracking'
 
 export default function ReportsModal({ session, onClose }) {
   const [activeTab, setActiveTab] = useState('summary')
+  const [userData, setUserData] = useState({
+    totalHours: 0,
+    daysAccessed: 0,
+    streak: 0,
+    weeklyData: [],
+    detailData: []
+  })
+
+  useEffect(() => {
+    if (session) {
+      const userId = session.user.email
+      const sessions = trackingService.getSessions(userId)
+      
+      setUserData({
+        totalHours: trackingService.getTotalHours(userId),
+        daysAccessed: trackingService.getDaysAccessed(userId),
+        streak: trackingService.getStreak(userId),
+        weeklyData: trackingService.getWeeklyData(userId),
+        detailData: sessions.slice(-7).reverse().map(s => ({
+          date: s.date,
+          sessions: sessions.filter(sess => sess.date === s.date).length,
+          focused: Math.round(sessions.filter(sess => sess.date === s.date).reduce((t, sess) => t + sess.duration/3600, 0) * 10) / 10 + 'h',
+          breaks: sessions.filter(sess => sess.date === s.date && sess.mode !== 'pomodoro').length
+        }))
+      })
+    }
+  }, [session])
 
   if (!session) {
     return (
@@ -74,17 +92,17 @@ export default function ReportsModal({ session, onClose }) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div className="card text-center">
                     <Clock className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">24.5</div>
+                    <div className="text-2xl font-bold text-gray-900">{userData.totalHours}</div>
                     <div className="text-gray-600">Focused Hours</div>
                   </div>
                   <div className="card text-center">
                     <Calendar className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">12</div>
+                    <div className="text-2xl font-bold text-gray-900">{userData.daysAccessed}</div>
                     <div className="text-gray-600">Days Accessed</div>
                   </div>
                   <div className="card text-center">
                     <Trophy className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">7</div>
+                    <div className="text-2xl font-bold text-gray-900">{userData.streak}</div>
                     <div className="text-gray-600">Day Streak</div>
                   </div>
                 </div>
@@ -94,7 +112,7 @@ export default function ReportsModal({ session, onClose }) {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Weekly Focus Hours</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RechartsBarChart data={mockData}>
+                    <RechartsBarChart data={userData.weeklyData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="day" />
                       <YAxis />
@@ -111,11 +129,7 @@ export default function ReportsModal({ session, onClose }) {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Detailed Analytics</h3>
               <div className="space-y-3">
-                {[
-                  { date: '2024-01-15', sessions: 8, focused: '3.2h', breaks: 7 },
-                  { date: '2024-01-14', sessions: 6, focused: '2.5h', breaks: 5 },
-                  { date: '2024-01-13', sessions: 10, focused: '4.1h', breaks: 9 },
-                ].map((day, index) => (
+                {userData.detailData.map((day, index) => (
                   <div key={index} className="card">
                     <div className="flex justify-between items-center">
                       <div>
@@ -141,7 +155,7 @@ export default function ReportsModal({ session, onClose }) {
                 {[
                   { rank: 1, name: 'Alex Chen', hours: 45.2, streak: 21 },
                   { rank: 2, name: 'Sarah Kim', hours: 42.8, streak: 18 },
-                  { rank: 3, name: 'You', hours: 24.5, streak: 7, isUser: true },
+                  { rank: 3, name: 'You', hours: userData.totalHours, streak: userData.streak, isUser: true },
                   { rank: 4, name: 'Mike Johnson', hours: 23.1, streak: 12 },
                 ].map((user, index) => (
                   <div key={index} className={`card ${user.isUser ? 'ring-2 ring-blue-500' : ''}`}>

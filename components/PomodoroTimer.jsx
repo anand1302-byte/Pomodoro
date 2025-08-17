@@ -10,7 +10,7 @@ const TIMER_MODES = {
   longBreak: { duration: 15 * 60, label: 'Long Break', color: 'longBreak' }
 }
 
-export default function PomodoroTimer({ theme }) {
+export default function PomodoroTimer({ theme, onSessionComplete }) {
   const [mode, setMode] = useState('pomodoro')
   const [timeLeft, setTimeLeft] = useState(TIMER_MODES.pomodoro.duration)
   const [isRunning, setIsRunning] = useState(false)
@@ -76,6 +76,13 @@ export default function PomodoroTimer({ theme }) {
   }
 
   const handleTimerComplete = () => {
+    const sessionDuration = TIMER_MODES[mode].duration
+    
+    // Track session completion
+    if (onSessionComplete) {
+      onSessionComplete(mode, sessionDuration)
+    }
+    
     // Play bell sound
     if (audioRef.current) {
       audioRef.current.play().catch(e => console.log('Audio play failed:', e))
@@ -197,6 +204,10 @@ export default function PomodoroTimer({ theme }) {
           🎉 {TIMER_MODES[mode].label} completed!
         </div>
       )}
+      
+      <audio ref={audioRef} preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav" />
+      </audio>
     </div>
   )
 }
