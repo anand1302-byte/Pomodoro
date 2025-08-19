@@ -1,22 +1,46 @@
 'use client'
 
-import { Timer, BarChart3, Settings, LogIn, Flame } from 'lucide-react'
+import { Timer, BarChart3, Settings, LogIn, Flame, Moon, Sun } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
-export default function Header({ session, streak, onReportsClick, onSettingsClick, onLoginClick }) {
+export default function Header({ session, streak, isDarkMode, onToggleDarkMode, onReportsClick, onSettingsClick, onLoginClick }) {
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className={`shadow-sm border-b transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-black border-gray-500' 
+        : 'bg-white border-gray-200'
+    }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-2">
-            <Timer className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Premium Pomodoro</h1>
+            <Timer className={`w-6 h-6 sm:w-8 sm:h-8 ${
+              isDarkMode ? 'text-blue-400' : 'text-blue-600'
+            }`} />
+            <h1 className={`text-lg sm:text-2xl font-bold ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>FocusFlow</h1>
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-4">
             <button
+              onClick={onToggleDarkMode}
+              className={`btn-primary flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 transition-colors ${
+                isDarkMode 
+                  ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
+            </button>
+            
+            <button
               onClick={onReportsClick}
-              className="btn-primary bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4"
+              className={`btn-primary flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 transition-colors ${
+                isDarkMode 
+                  ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Reports</span>
@@ -24,7 +48,11 @@ export default function Header({ session, streak, onReportsClick, onSettingsClic
             
             <button
               onClick={onSettingsClick}
-              className="btn-primary bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4"
+              className={`btn-primary flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 transition-colors ${
+                isDarkMode 
+                  ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               <Settings className="w-4 h-4" />
               <span className="hidden sm:inline">Settings</span>

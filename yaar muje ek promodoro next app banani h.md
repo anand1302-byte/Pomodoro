@@ -35,6 +35,10 @@ tech stack :-
     - anime.js
     - lucide icon 
 
+isme muje isme 1 login page jisme 1 random email or password set karke dashboard banao or isme jitane user login ho sab ka data dikhae plus isme traffic manage ho pura or kitane user kis jagah se aata hai vo realtime manage ho or database ke liye aap isme apis create karke us user ka data store kardo
+
+Dashboard me 8 card ho jisme user kitane hai active plus sabhi chij manage ho
+cards ke niche pi chart ho jisme kon konsi country se hai or 2nd chart average 24 hour ke active user kon kon hai 
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -80,3 +84,6 @@ Build a premium Pomodoro Next.js application with the following specifications:
 
 Deliverables:
 A single-page, production-ready Next.js (JSX) app styled with Tailwind, animated with Anime.js, integrated with Google Auth, and using Lucide Icons for UI."
+
+
+

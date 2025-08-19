@@ -1,101 +1,154 @@
-'use client'
+'use client';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Header from '../components/Header';
+import PomodoroTimer from '../components/PomodoroTimer';
+import TodoList from '../components/TodoList';
+import StatsContainer from '../components/StatsContainer';
+import ArticleContent from '../components/ArticleContent';
+import LoginModal from '../components/LoginModal';
+import ReportsModal from '../components/ReportsModal';
+import SettingsModal from '../components/SettingsModal';
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import Header from '../components/Header'
-import PomodoroTimer from '../components/PomodoroTimer'
-import TodoList from '../components/TodoList'
-import ReportsModal from '../components/ReportsModal'
-import SettingsModal from '../components/SettingsModal'
-import LoginModal from '../components/LoginModal'
-import { trackingService } from '../lib/tracking'
+const DEFAULT_THEME = {
+  pomodoro: '#ef4444',
+  shortBreak: '#10b981',
+  longBreak: '#3b82f6'
+};
 
 export default function Home() {
-  const { data: session } = useSession()
-  const [showReports, setShowReports] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
-  const [showLogin, setShowLogin] = useState(false)
-  const [streak, setStreak] = useState(0)
-  const [theme, setTheme] = useState({
-    pomodoro: '#3B82F6',
-    shortBreak: '#EF4444',
-    longBreak: '#10B981'
-  })
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [theme, setTheme] = useState(DEFAULT_THEME);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showReportsModal, setShowReportsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
-    if (session) {
-      const userId = session.user.email
-      const currentStreak = trackingService.updateStreak(userId)
-      setStreak(currentStreak)
-      
-      const savedTheme = localStorage.getItem('theme')
-      if (savedTheme) setTheme(JSON.parse(savedTheme))
+    const savedTheme = localStorage.getItem('pomodoroTheme');
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedTheme) {
+      setTheme(JSON.parse(savedTheme));
     }
-  }, [session])
+    if (savedDarkMode) {
+      setIsDarkMode(JSON.parse(savedDarkMode));
+    }
+  }, []);
 
-  const handleTaskLimitReached = () => {
-    setShowLogin(true)
-  }
-
-  const updateTheme = (newTheme) => {
-    setTheme(newTheme)
-    localStorage.setItem('theme', JSON.stringify(newTheme))
-  }
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
+  };
 
   const handleSessionComplete = (mode, duration) => {
+    // Track session completion for reports
+    const today = new Date().toDateString();
+    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
+    sessions.push({
+      date: today,
+      mode,
+      duration,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('sessions', JSON.stringify(sessions));
+  };
+
+  const handleTaskLimitReached = () => {
+    setShowLoginModal(true);
+  };
+
+  const handleReportsClick = () => {
     if (session) {
-      const userId = session.user.email
-      trackingService.saveSession(userId, mode, duration)
+      setShowReportsModal(true);
+    } else {
+      setShowLoginModal(true);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-black' 
+        : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
+    }`}>
       <Header 
         session={session}
         streak={streak}
-        onReportsClick={() => setShowReports(true)}
-        onSettingsClick={() => setShowSettings(true)}
-        onLoginClick={() => setShowLogin(true)}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+        onReportsClick={handleReportsClick}
+        onSettingsClick={() => setShowSettingsModal(true)}
+        onLoginClick={() => setShowLoginModal(true)}
       />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 md:h-[500px] lg:h-[600px]">
-            <div className="flex-1 min-h-[400px] md:min-h-0">
-              <PomodoroTimer 
-                theme={theme} 
-                onSessionComplete={handleSessionComplete}
-              />
-            </div>
-            <div className="flex-1 min-h-[400px] md:min-h-0">
-              <TodoList 
-                session={session}
-                onTaskLimitReached={handleTaskLimitReached}
-              />
-            </div>
-          </div>
+      <main className="container mx-auto px-4 py-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+          <PomodoroTimer 
+            theme={theme}
+            isDarkMode={isDarkMode}
+            onSessionComplete={handleSessionComplete}
+          />
+          
+          <TodoList 
+            session={session}
+            isDarkMode={isDarkMode}
+            onTaskLimitReached={handleTaskLimitReached}
+          />
+        </div>
+        
+        <div className="max-w-4xl mx-auto mb-12">
+          <StatsContainer isDarkMode={isDarkMode} />
+        </div>
+        
+        <div className="max-w-5xl mx-auto">
+          <ArticleContent isDarkMode={isDarkMode} />
         </div>
       </main>
 
-      {showReports && (
+      <footer className={`border-t py-3 mt-20 transition-colors duration-300 ${
+        isDarkMode 
+          ? 'bg-black border-gray-500' 
+          : 'bg-white border-gray-200'
+      }`}>
+        <div className="container mx-auto px-4 text-center">
+          <p className={`mb-2 ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>© 2024 Premium Pomodoro. All rights reserved.</p>
+          <button 
+            onClick={() => router.push('/login')}
+            className={`underline font-medium transition-colors ${
+              isDarkMode 
+                ? 'text-blue-400 hover:text-blue-300' 
+                : 'text-blue-600 hover:text-blue-800'
+            }`}
+          >
+            Admin Login
+          </button>
+        </div>
+      </footer>
+
+      {showLoginModal && (
+        <LoginModal onClose={() => setShowLoginModal(false)} />
+      )}
+      
+      {showReportsModal && (
         <ReportsModal 
           session={session}
-          onClose={() => setShowReports(false)}
+          onClose={() => setShowReportsModal(false)}
         />
       )}
-
-      {showSettings && (
+      
+      {showSettingsModal && (
         <SettingsModal 
           theme={theme}
-          onThemeChange={updateTheme}
-          onClose={() => setShowSettings(false)}
+          onThemeChange={setTheme}
+          onClose={() => setShowSettingsModal(false)}
         />
       )}
-
-      {showLogin && (
-        <LoginModal onClose={() => setShowLogin(false)} />
-      )}
     </div>
-  )
+  );
 }

@@ -5,12 +5,12 @@ import { Play, Pause, RotateCcw } from 'lucide-react'
 import anime from 'animejs'
 
 const TIMER_MODES = {
-  pomodoro: { duration: 25 * 60, label: 'Pomodoro', color: 'pomodoro' },
+  pomodoro: { duration: 25 * 60, label: 'Work', color: 'pomodoro' },
   shortBreak: { duration: 5 * 60, label: 'Short Break', color: 'shortBreak' },
   longBreak: { duration: 15 * 60, label: 'Long Break', color: 'longBreak' }
 }
 
-export default function PomodoroTimer({ theme, onSessionComplete }) {
+export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) {
   const [mode, setMode] = useState('pomodoro')
   const [timeLeft, setTimeLeft] = useState(TIMER_MODES.pomodoro.duration)
   const [isRunning, setIsRunning] = useState(false)
@@ -120,7 +120,9 @@ export default function PomodoroTimer({ theme, onSessionComplete }) {
   const currentColor = theme[TIMER_MODES[mode].color]
 
   return (
-    <div className="card max-w-md mx-auto text-center">
+    <div className={`card text-center transition-colors duration-300 ${
+      isDarkMode ? 'bg-black border-gray-500' : ''
+    }`}>
       <div className="flex justify-center space-x-1 sm:space-x-2 mb-6 sm:mb-8">
         {Object.entries(TIMER_MODES).map(([key, config]) => (
           <button
@@ -129,7 +131,9 @@ export default function PomodoroTimer({ theme, onSessionComplete }) {
             className={`px-2 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm ${
               mode === key 
                 ? 'text-white shadow-lg' 
-                : 'text-gray-600 hover:text-gray-800'
+                : isDarkMode 
+                  ? 'text-gray-300 hover:text-white' 
+                  : 'text-gray-600 hover:text-gray-800'
             }`}
             style={{
               backgroundColor: mode === key ? theme[config.color] : 'transparent'
@@ -150,7 +154,7 @@ export default function PomodoroTimer({ theme, onSessionComplete }) {
             stroke="currentColor"
             strokeWidth="8"
             fill="transparent"
-            className="text-gray-200"
+            className={isDarkMode ? 'text-gray-500' : 'text-gray-200'}
           />
           <circle
             ref={circleRef}
@@ -175,7 +179,9 @@ export default function PomodoroTimer({ theme, onSessionComplete }) {
             >
               {formatTime(timeLeft)}
             </div>
-            <div className="text-gray-600 text-xs sm:text-sm">
+            <div className={`text-xs sm:text-sm ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
               {TIMER_MODES[mode].label}
             </div>
           </div>
@@ -193,7 +199,11 @@ export default function PomodoroTimer({ theme, onSessionComplete }) {
         
         <button
           onClick={resetTimer}
-          className="btn-primary bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 sm:px-4 py-3"
+          className={`btn-primary px-3 sm:px-4 py-3 transition-colors ${
+            isDarkMode 
+              ? 'bg-gray-600 text-white hover:bg-gray-500' 
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
         >
           <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>

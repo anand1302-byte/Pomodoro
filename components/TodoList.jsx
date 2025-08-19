@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus, Check, Trash2, Lock } from 'lucide-react'
 import anime from 'animejs'
 
-export default function TodoList({ session, onTaskLimitReached }) {
+export default function TodoList({ session, isDarkMode, onTaskLimitReached }) {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
 
@@ -76,11 +76,17 @@ export default function TodoList({ session, onTaskLimitReached }) {
   const canAddTask = session || tasks.length < 3
 
   return (
-    <div className="card max-w-md mx-auto">
+    <div className={`card transition-colors duration-300 ${
+      isDarkMode ? 'bg-black border-gray-500' : ''
+    }`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Tasks</h2>
+        <h2 className={`text-xl font-semibold ${
+          isDarkMode ? 'text-white' : 'text-gray-900'
+        }`}>Tasks</h2>
         {!session && (
-          <div className="flex items-center space-x-1 text-sm text-gray-500">
+          <div className={`flex items-center space-x-1 text-sm ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-500'
+          }`}>
             <Lock className="w-4 h-4" />
             <span>{tasks.length}/3</span>
           </div>
@@ -95,7 +101,11 @@ export default function TodoList({ session, onTaskLimitReached }) {
           onKeyPress={handleKeyPress}
           placeholder={canAddTask ? "Add a new task..." : "Sign in to add more tasks"}
           disabled={!canAddTask}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-500 text-white placeholder-gray-300 disabled:bg-gray-900' 
+              : 'bg-white border-gray-300 text-gray-900 disabled:bg-gray-100'
+          } disabled:cursor-not-allowed`}
         />
         <button
           onClick={addTask}
@@ -119,8 +129,12 @@ export default function TodoList({ session, onTaskLimitReached }) {
             data-task-id={task.id}
             className={`flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 ${
               task.completed 
-                ? 'bg-green-50 border-green-200' 
-                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                ? isDarkMode 
+                  ? 'bg-green-900/30 border-green-600' 
+                  : 'bg-green-50 border-green-200'
+                : isDarkMode 
+                  ? 'bg-gray-800 border-gray-500 hover:bg-gray-700' 
+                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
             <button
@@ -134,7 +148,11 @@ export default function TodoList({ session, onTaskLimitReached }) {
               {task.completed && <Check className="w-3 h-3" />}
             </button>
             
-            <span className={`flex-1 ${task.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+            <span className={`flex-1 ${
+              task.completed 
+                ? isDarkMode ? 'line-through text-gray-500' : 'line-through text-gray-500'
+                : isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
               {task.text}
             </span>
             
@@ -148,7 +166,9 @@ export default function TodoList({ session, onTaskLimitReached }) {
         ))}
         
         {tasks.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className={`text-center py-8 ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-500'
+          }`}>
             No tasks yet. Add one to get started!
           </div>
         )}
