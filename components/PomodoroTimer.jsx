@@ -128,7 +128,7 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
           <button
             key={key}
             onClick={() => handleModeChange(key)}
-            className={`px-2 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm ${
+            className={`px-3 sm:px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
               mode === key 
                 ? 'text-white shadow-lg' 
                 : isDarkMode 
@@ -146,7 +146,7 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
       </div>
 
       <div className="timer-content relative mb-6 sm:mb-8">
-        <svg className="w-48 h-48 sm:w-64 sm:h-64 mx-auto transform -rotate-90" viewBox="0 0 200 200">
+        <svg className="w-64 h-64 sm:w-80 sm:h-80 mx-auto transform -rotate-90" viewBox="0 0 200 200">
           <circle
             cx="100"
             cy="100"
@@ -174,12 +174,12 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div 
-              className="text-2xl sm:text-4xl font-bold mb-2"
+              className="text-3xl sm:text-5xl font-bold mb-2"
               style={{ color: currentColor }}
             >
               {formatTime(timeLeft)}
             </div>
-            <div className={`text-xs sm:text-sm ${
+            <div className={`text-sm sm:text-base ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
               {TIMER_MODES[mode].label}
