@@ -128,7 +128,7 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
           <button
             key={key}
             onClick={() => handleModeChange(key)}
-            className={`px-3 sm:px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
+            className={`px-4 sm:px-4 py-4 rounded-lg font-semibold transition-all duration-200 text-base sm:text-base ${
               mode === key 
                 ? 'text-white shadow-lg' 
                 : isDarkMode 
@@ -146,13 +146,13 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
       </div>
 
       <div className="timer-content relative mb-6 sm:mb-8">
-        <svg className="w-64 h-64 sm:w-80 sm:h-80 mx-auto transform -rotate-90" viewBox="0 0 200 200">
+        <svg className="w-80 h-80 sm:w-64 sm:h-64 mx-auto transform -rotate-90" viewBox="0 0 200 200">
           <circle
             cx="100"
             cy="100"
             r="90"
             stroke="currentColor"
-            strokeWidth="8"
+            strokeWidth="3"
             fill="transparent"
             className={isDarkMode ? 'text-gray-500' : 'text-gray-200'}
           />
@@ -162,7 +162,7 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
             cy="100"
             r="90"
             stroke={currentColor}
-            strokeWidth="8"
+            strokeWidth="3"
             fill="transparent"
             strokeDasharray="628"
             strokeDashoffset="628"
@@ -174,12 +174,12 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div 
-              className="text-3xl sm:text-5xl font-bold mb-2"
+              className="text-7xl sm:text-4xl font-bold mb-2 timer-font"
               style={{ color: currentColor }}
             >
               {formatTime(timeLeft)}
             </div>
-            <div className={`text-sm sm:text-base ${
+            <div className={`text-lg sm:text-base ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
               {TIMER_MODES[mode].label}
@@ -191,21 +191,21 @@ export default function PomodoroTimer({ theme, isDarkMode, onSessionComplete }) 
       <div className="flex justify-center space-x-3 sm:space-x-4">
         <button
           onClick={toggleTimer}
-          className="btn-primary text-white px-6 sm:px-8 py-3 text-base sm:text-lg"
+          className="btn-primary text-white px-8 sm:px-8 py-4 sm:py-3 text-2xl sm:text-lg font-medium"
           style={{ backgroundColor: currentColor }}
         >
-          {isRunning ? <Pause className="w-5 h-5 sm:w-6 sm:h-6" /> : <Play className="w-5 h-5 sm:w-6 sm:h-6" />}
+          {isRunning ? 'Stop' : 'Start'}
         </button>
         
         <button
           onClick={resetTimer}
-          className={`btn-primary px-3 sm:px-4 py-3 transition-colors ${
+          className={`btn-primary px-8 sm:px-8 py-4 sm:py-3 text-2xl sm:text-lg font-medium transition-colors ${
             isDarkMode 
               ? 'bg-gray-600 text-white hover:bg-gray-500' 
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
-          <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
+          Reset
         </button>
       </div>
 

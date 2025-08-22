@@ -20,4 +20,8 @@
   .card {
     @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6 transition-all duration-200 hover:shadow-xl;
   }
+  
+  .timer-font {
+    font-family: var(--font-varela), 'Inter', system-ui, sans-serif;
+  }
 }

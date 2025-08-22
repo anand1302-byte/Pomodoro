@@ -117,7 +117,7 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <p className={`mb-2 ${
             isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>© 2024 Premium Pomodoro. All rights reserved.</p>
+          }`}>© 2024 FocusFlow. All rights reserved.</p>
           <button 
             onClick={() => router.push('/login')}
             className={`underline font-medium transition-colors ${
